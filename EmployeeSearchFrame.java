@@ -83,25 +83,33 @@ public class EmployeeSearchFrame extends JFrame {
     btnDBFill.addActionListener(
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          String[] dept = { "Headquarters" };
-
           try {
             Connection conn = DatabaseConnection.getConnection();
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT * FROM DEPARTMENT");
-            rs.close();
-            statement.close();
+            Statement statementDept = conn.createStatement();
+            Statement statementProj = conn.createStatement();
+            ResultSet rsDepartment = statementDept.executeQuery(
+              "SELECT Dname FROM DEPARTMENT"
+            );
+            ResultSet rsProject = statementProj.executeQuery(
+              "SELECT Pname FROM PROJECT"
+            );
+            department.clear();
+            project.clear();
+            while (rsDepartment.next()) {
+              String departmentName = rsDepartment.getString("Dname");
+              department.addElement(departmentName);
+            }
+            while (rsProject.next()) {
+              String projectName = rsProject.getString("Pname");
+              project.addElement(projectName);
+            }
+            rsProject.close();
+            rsDepartment.close();
+            statementDept.close();
+            statementProj.close();
             conn.close();
           } catch (Exception exep) {
             exep.printStackTrace();
-          }
-
-          for (int i = 0; i < dept.length; i++) {
-            department.addElement(dept[i]);
-          }
-          String[] prj = { "ProdoctX", "ProductY", "ProductZ" };
-          for (int j = 0; j < prj.length; j++) {
-            project.addElement(prj[j]);
           }
         }
       }
@@ -111,21 +119,15 @@ public class EmployeeSearchFrame extends JFrame {
     btnDBFill.setBounds(307, 19, 68, 23);
     contentPane.add(btnDBFill);
 
-    JLabel lblDepartment = new JLabel("Department");
-    lblDepartment.setFont(new Font("Times New Roman", Font.BOLD, 12));
-    lblDepartment.setBounds(52, 63, 89, 14);
-    contentPane.add(lblDepartment);
-
-    JLabel lblProject = new JLabel("Project");
-    lblProject.setFont(new Font("Times New Roman", Font.BOLD, 12));
-    lblProject.setBounds(255, 63, 47, 14);
-    contentPane.add(lblProject);
-
     lstProject = new JList<String>(new DefaultListModel<String>());
     lstProject.setFont(new Font("Tahoma", Font.PLAIN, 12));
     lstProject.setModel(project);
     lstProject.setBounds(225, 84, 150, 42);
-    contentPane.add(lstProject);
+
+    JScrollPane scrollPaneProject = new JScrollPane();
+    scrollPaneProject.setBounds(225, 84, 150, 42);
+    contentPane.add(scrollPaneProject);
+    scrollPaneProject.setViewportView(lstProject);
 
     JCheckBox chckbxNotDept = new JCheckBox("Not");
     chckbxNotDept.setBounds(71, 133, 59, 23);
@@ -141,6 +143,11 @@ public class EmployeeSearchFrame extends JFrame {
     lstDepartment.setFont(new Font("Tahoma", Font.PLAIN, 12));
     lstDepartment.setModel(department);
 
+    JScrollPane scrollPaneDepartment = new JScrollPane();
+    scrollPaneDepartment.setBounds(36, 84, 172, 40);
+    contentPane.add(scrollPaneDepartment);
+    scrollPaneDepartment.setViewportView(lstDepartment);
+
     JLabel lblEmployee = new JLabel("Employee");
     lblEmployee.setFont(new Font("Times New Roman", Font.BOLD, 12));
     lblEmployee.setBounds(52, 179, 89, 14);
@@ -150,7 +157,9 @@ public class EmployeeSearchFrame extends JFrame {
     btnSearch.addActionListener(
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          textAreaEmployee.setText("John Smith\nFranklin Wong");
+          textAreaEmployee.setText(
+            "John Smith\nFranklin Wong\nAshamsa Adhikari\nNigesh Byanjankar\nJordan Crumpton"
+          );
         }
       }
     );
@@ -170,6 +179,10 @@ public class EmployeeSearchFrame extends JFrame {
 
     textAreaEmployee = new JTextArea();
     textAreaEmployee.setBounds(36, 197, 339, 68);
-    contentPane.add(textAreaEmployee);
+
+    JScrollPane scrollPaneEmployee = new JScrollPane();
+    scrollPaneEmployee.setBounds(36, 197, 339, 68);
+    scrollPaneEmployee.setViewportView(textAreaEmployee);
+    contentPane.add(scrollPaneEmployee);
   }
 }
