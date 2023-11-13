@@ -84,7 +84,8 @@ public class EmployeeSearchFrame extends JFrame {
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           try {
-            Connection conn = DatabaseConnection.getConnection();
+            String databaseName = txtDatabase.getText();
+            Connection conn = DatabaseConnection.getConnection(databaseName);
             Statement statementDept = conn.createStatement();
             Statement statementProj = conn.createStatement();
             ResultSet rsDepartment = statementDept.executeQuery(

@@ -4,14 +4,16 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-  private static String database =
-    "jdbc:mysql://cis-lonsmith-student2.ccr8ibhqw8qf.us-east-2.rds.amazonaws.com/COMPANY?useSSL=false";
   private static String username = "adhikarias";
   private static String password = "abc123";
 
-  public static Connection getConnection()
+  public static Connection getConnection(String database)
     throws ClassNotFoundException, SQLException {
     Class.forName("com.mysql.jdbc.Driver");
-    return DriverManager.getConnection(database, username, password);
+    String databaseLink =
+      "jdbc:mysql://cis-lonsmith-student2.ccr8ibhqw8qf.us-east-2.rds.amazonaws.com/" +
+      database +
+      "?useSSL=false";
+    return DriverManager.getConnection(databaseLink, username, password);
   }
 }
