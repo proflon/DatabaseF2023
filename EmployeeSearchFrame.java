@@ -32,7 +32,7 @@ public class EmployeeSearchFrame extends JFrame {
 	private DefaultListModel<String> project = new DefaultListModel<String>();
 	private JTextArea textAreaEmployee;
 	/**
-	 * Launch the .
+	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
