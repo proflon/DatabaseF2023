@@ -126,7 +126,6 @@ public class EmployeeSearchFrame extends JFrame {
     lstProject.setFont(new Font("Tahoma", Font.PLAIN, 12));
     lstProject.setModel(project);
     lstProject.setBounds(225, 84, 150, 42);
-    List<String> selectedProjects = lstProject.getSelectedValuesList();
 
     JScrollPane scrollPaneProject = new JScrollPane();
     scrollPaneProject.setBounds(225, 84, 150, 42);
@@ -166,41 +165,57 @@ public class EmployeeSearchFrame extends JFrame {
             Statement statementPrint = conn.createStatement();
             List<String> selectedProjects = lstProject.getSelectedValuesList();
             List<String> selectedDepartment = lstDepartment.getSelectedValuesList();
-            if (selectedProjects.isEmpty() && selectedDepartment.isEmpty()) {
-              Statement statementAll = conn.createStatement();
-              ResultSet allEmployees = statementAll.executeQuery(
-                "SELECT Fname, Minit, Lname FROM EMPLOYEE"
-              );
-              while (allEmployees.next()) {
-                String employeeName =
-                  allEmployees.getString("Fname") +
-                  " " +
-                  allEmployees.getString("Minit") +
-                  " " +
-                  allEmployees.getString("Lname");
-                textAreaEmployee.append(employeeName + "\n");
+            String projectName = "";
+            String departmentName = "";
+            if (!selectedProjects.isEmpty()) {
+              for (String project : selectedProjects) {
+                projectName = projectName + "'" + project + "'" + ",";
               }
-            } else {
-              for (String projectName : selectedProjects) {
-                ResultSet employees = statementPrint.executeQuery(
-                  "SELECT Fname, Minit,  Lname FROM EMPLOYEE, WORKS_ON  WHERE EMPLOYEE.Ssn = WORKS_ON.Essn AND WORKS_ON.Pno IN (SELECT Pnumber FROM PROJECT WHERE Pname IN ('" +
-                  projectName +
-                  "'));"
-                );
-                while (employees.next()) {
-                  String employeeName =
-                    employees.getString("Fname") +
-                    " " +
-                    employees.getString("Minit") +
-                    " " +
-                    employees.getString("Lname");
-                  textAreaEmployee.append(employeeName + "\n");
-                }
-                employees.close();
-              }
-              statementPrint.close();
-              conn.close();
             }
+            if (!selectedDepartment.isEmpty()) {
+              for (String department : selectedDepartment) {
+                departmentName = departmentName + "'" + department + "',";
+              }
+            }
+
+            projectName = projectName.substring(0, projectName.length() - 1);
+            departmentName =
+              departmentName.substring(0, departmentName.length() - 1);
+            System.out.println(projectName);
+            String queryString = "";
+            if (selectedProjects.isEmpty() && selectedDepartment.isEmpty()) {
+              queryString = "SELECT Fname, Minit, Lname FROM EMPLOYEE";
+            } else if (selectedDepartment.isEmpty()) {
+              queryString =
+                "SELECT Fname, Minit,  Lname FROM EMPLOYEE, WORKS_ON  WHERE EMPLOYEE.Ssn = WORKS_ON.Essn AND WORKS_ON.Pno IN (SELECT Pnumber FROM PROJECT WHERE Pname IN (" +
+                projectName +
+                ");";
+            } else if (selectedProjects.isEmpty()) {
+              queryString =
+                "SELECT Fname, Minit,  Lname FROM EMPLOYEE, DEPARTMENT WHERE DEPARTMENT.Dnumber = EMPLOYEE.Dno AND DEPARTMENT.Dname IN (" +
+                departmentName +
+                ");";
+            } else {
+              queryString =
+                "SELECT DISTINCT E.Fname, E.Minit, E.Lname FROM EMPLOYEE E INNER JOIN DEPARTMENT D ON D.Dnumber = E.Dno INNER JOIN WORKS_ON W ON E.Ssn = W.Essn WHERE D.Dname IN (" +
+                departmentName +
+                ") AND W.Pno IN (SELECT P.Pnumber FROM PROJECT P WHERE P.Pname IN (" +
+                projectName +
+                "));";
+            }
+            ResultSet employees = statementPrint.executeQuery(queryString);
+            while (employees.next()) {
+              String employeeName =
+                employees.getString("Fname") +
+                " " +
+                employees.getString("Minit") +
+                " " +
+                employees.getString("Lname");
+              textAreaEmployee.append(employeeName + "\n");
+            }
+            employees.close();
+            statementPrint.close();
+            conn.close();
           } catch (Exception exep) {
             exep.printStackTrace();
           }
