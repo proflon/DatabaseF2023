@@ -127,6 +127,16 @@ public class EmployeeSearchFrame extends JFrame {
     lstProject.setModel(project);
     lstProject.setBounds(225, 84, 150, 42);
 
+    JLabel lblProject = new JLabel("Project");
+		lblProject.setFont(new Font("Times New Roman", Font.BOLD, 12));
+		lblProject.setBounds(255, 63, 47, 14);
+		contentPane.add(lblProject);
+
+    JLabel lblDepartment = new JLabel("Department");
+		lblDepartment.setFont(new Font("Times New Roman", Font.BOLD, 12));
+		lblDepartment.setBounds(52, 63, 89, 14);
+		contentPane.add(lblDepartment);
+
     JScrollPane scrollPaneProject = new JScrollPane();
     scrollPaneProject.setBounds(225, 84, 150, 42);
     contentPane.add(scrollPaneProject);
