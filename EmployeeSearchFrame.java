@@ -167,6 +167,8 @@ public class EmployeeSearchFrame extends JFrame {
             List<String> selectedDepartment = lstDepartment.getSelectedValuesList();
             String projectName = "";
             String departmentName = "";
+            String notDepartment = "";
+            String notProject = "";
             if (!selectedProjects.isEmpty()) {
               for (String project : selectedProjects) {
                 projectName = projectName + "'" + project + "'" + ",";
@@ -182,24 +184,38 @@ public class EmployeeSearchFrame extends JFrame {
             departmentName =
               departmentName.substring(0, departmentName.length() - 1);
             System.out.println(projectName);
+            if (chckbxNotDept.isSelected()) {
+              notDepartment = "NOT";
+            }
+            if (chckbxNotProject.isSelected()) {
+              notProject = "NOT";
+            }
             String queryString = "";
             if (selectedProjects.isEmpty() && selectedDepartment.isEmpty()) {
               queryString = "SELECT Fname, Minit, Lname FROM EMPLOYEE";
             } else if (selectedDepartment.isEmpty()) {
               queryString =
-                "SELECT Fname, Minit,  Lname FROM EMPLOYEE, WORKS_ON  WHERE EMPLOYEE.Ssn = WORKS_ON.Essn AND WORKS_ON.Pno IN (SELECT Pnumber FROM PROJECT WHERE Pname IN (" +
+                "SELECT Fname, Minit,  Lname FROM EMPLOYEE, WORKS_ON  WHERE EMPLOYEE.Ssn = WORKS_ON.Essn AND WORKS_ON.Pno " +
+                notProject +
+                " IN (SELECT Pnumber FROM PROJECT WHERE Pname IN (" +
                 projectName +
                 ");";
             } else if (selectedProjects.isEmpty()) {
               queryString =
-                "SELECT Fname, Minit,  Lname FROM EMPLOYEE, DEPARTMENT WHERE DEPARTMENT.Dnumber = EMPLOYEE.Dno AND DEPARTMENT.Dname IN (" +
+                "SELECT Fname, Minit,  Lname FROM EMPLOYEE, DEPARTMENT WHERE DEPARTMENT.Dnumber = EMPLOYEE.Dno AND DEPARTMENT.Dname " +
+                notDepartment +
+                " IN (" +
                 departmentName +
                 ");";
             } else {
               queryString =
-                "SELECT DISTINCT E.Fname, E.Minit, E.Lname FROM EMPLOYEE E INNER JOIN DEPARTMENT D ON D.Dnumber = E.Dno INNER JOIN WORKS_ON W ON E.Ssn = W.Essn WHERE D.Dname IN (" +
+                "SELECT DISTINCT E.Fname, E.Minit, E.Lname FROM EMPLOYEE E INNER JOIN DEPARTMENT D ON D.Dnumber = E.Dno INNER JOIN WORKS_ON W ON E.Ssn = W.Essn WHERE D.Dname " +
+                notDepartment +
+                " IN (" +
                 departmentName +
-                ") AND W.Pno IN (SELECT P.Pnumber FROM PROJECT P WHERE P.Pname IN (" +
+                ") AND W.Pno IN (SELECT P.Pnumber FROM PROJECT P WHERE P.Pname " +
+                notProject +
+                " IN (" +
                 projectName +
                 "));";
             }
