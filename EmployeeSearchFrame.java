@@ -128,14 +128,14 @@ public class EmployeeSearchFrame extends JFrame {
     lstProject.setBounds(225, 84, 150, 42);
 
     JLabel lblProject = new JLabel("Project");
-		lblProject.setFont(new Font("Times New Roman", Font.BOLD, 12));
-		lblProject.setBounds(255, 63, 47, 14);
-		contentPane.add(lblProject);
+    lblProject.setFont(new Font("Times New Roman", Font.BOLD, 12));
+    lblProject.setBounds(255, 63, 47, 14);
+    contentPane.add(lblProject);
 
     JLabel lblDepartment = new JLabel("Department");
-		lblDepartment.setFont(new Font("Times New Roman", Font.BOLD, 12));
-		lblDepartment.setBounds(52, 63, 89, 14);
-		contentPane.add(lblDepartment);
+    lblDepartment.setFont(new Font("Times New Roman", Font.BOLD, 12));
+    lblDepartment.setBounds(52, 63, 89, 14);
+    contentPane.add(lblDepartment);
 
     JScrollPane scrollPaneProject = new JScrollPane();
     scrollPaneProject.setBounds(225, 84, 150, 42);
@@ -183,17 +183,15 @@ public class EmployeeSearchFrame extends JFrame {
               for (String project : selectedProjects) {
                 projectName = projectName + "'" + project + "'" + ",";
               }
+              projectName = projectName.substring(0, projectName.length() - 1);
             }
             if (!selectedDepartment.isEmpty()) {
               for (String department : selectedDepartment) {
                 departmentName = departmentName + "'" + department + "',";
               }
+              departmentName =
+                departmentName.substring(0, departmentName.length() - 1);
             }
-
-            projectName = projectName.substring(0, projectName.length() - 1);
-            departmentName =
-              departmentName.substring(0, departmentName.length() - 1);
-            System.out.println(projectName);
             if (chckbxNotDept.isSelected()) {
               notDepartment = "NOT";
             }
@@ -205,14 +203,14 @@ public class EmployeeSearchFrame extends JFrame {
               queryString = "SELECT Fname, Minit, Lname FROM EMPLOYEE";
             } else if (selectedDepartment.isEmpty()) {
               queryString =
-                "SELECT Fname, Minit,  Lname FROM EMPLOYEE, WORKS_ON  WHERE EMPLOYEE.Ssn = WORKS_ON.Essn AND WORKS_ON.Pno " +
+                "SELECT DISTINCT Fname, Minit,  Lname FROM EMPLOYEE, WORKS_ON  WHERE EMPLOYEE.Ssn = WORKS_ON.Essn AND WORKS_ON.Pno " +
                 notProject +
                 " IN (SELECT Pnumber FROM PROJECT WHERE Pname IN (" +
                 projectName +
-                ");";
+                "));";
             } else if (selectedProjects.isEmpty()) {
               queryString =
-                "SELECT Fname, Minit,  Lname FROM EMPLOYEE, DEPARTMENT WHERE DEPARTMENT.Dnumber = EMPLOYEE.Dno AND DEPARTMENT.Dname " +
+                "SELECT DISTINCT Fname, Minit,  Lname FROM EMPLOYEE, DEPARTMENT WHERE DEPARTMENT.Dnumber = EMPLOYEE.Dno AND DEPARTMENT.Dname " +
                 notDepartment +
                 " IN (" +
                 departmentName +
@@ -250,6 +248,9 @@ public class EmployeeSearchFrame extends JFrame {
     );
     btnSearch.setBounds(80, 276, 89, 23);
     contentPane.add(btnSearch);
+
+
+    
 //adding functionality to clear button
     JButton btnClear = new JButton("Clear");
 btnClear.addActionListener(
