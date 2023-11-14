@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -33,6 +34,7 @@ public class EmployeeSearchFrame extends JFrame {
   private JList<String> lstProject;
   private DefaultListModel<String> project = new DefaultListModel<String>();
   private JTextArea textAreaEmployee;
+  private String databaseName = "";
 
   /**
    * Launch the application.
@@ -84,7 +86,7 @@ public class EmployeeSearchFrame extends JFrame {
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           try {
-            String databaseName = txtDatabase.getText();
+            databaseName = txtDatabase.getText();
             Connection conn = DatabaseConnection.getConnection(databaseName);
             Statement statementDept = conn.createStatement();
             Statement statementProj = conn.createStatement();
@@ -124,6 +126,7 @@ public class EmployeeSearchFrame extends JFrame {
     lstProject.setFont(new Font("Tahoma", Font.PLAIN, 12));
     lstProject.setModel(project);
     lstProject.setBounds(225, 84, 150, 42);
+    List<String> selectedProjects = lstProject.getSelectedValuesList();
 
     JScrollPane scrollPaneProject = new JScrollPane();
     scrollPaneProject.setBounds(225, 84, 150, 42);
@@ -158,9 +161,49 @@ public class EmployeeSearchFrame extends JFrame {
     btnSearch.addActionListener(
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          textAreaEmployee.setText(
-            "John Smith\nFranklin Wong\nAshamsa Adhikari\nNigesh Byanjankar\nJordan Crumpton"
-          );
+          try {
+            Connection conn = DatabaseConnection.getConnection(databaseName);
+            Statement statementPrint = conn.createStatement();
+            List<String> selectedProjects = lstProject.getSelectedValuesList();
+            List<String> selectedDepartment = lstDepartment.getSelectedValuesList();
+            if (selectedProjects.isEmpty() && selectedDepartment.isEmpty()) {
+              Statement statementAll = conn.createStatement();
+              ResultSet allEmployees = statementAll.executeQuery(
+                "SELECT Fname, Minit, Lname FROM EMPLOYEE"
+              );
+              while (allEmployees.next()) {
+                String employeeName =
+                  allEmployees.getString("Fname") +
+                  " " +
+                  allEmployees.getString("Minit") +
+                  " " +
+                  allEmployees.getString("Lname");
+                textAreaEmployee.append(employeeName + "\n");
+              }
+            } else {
+              for (String projectName : selectedProjects) {
+                ResultSet employees = statementPrint.executeQuery(
+                  "SELECT Fname, Minit,  Lname FROM EMPLOYEE, WORKS_ON  WHERE EMPLOYEE.Ssn = WORKS_ON.Essn AND WORKS_ON.Pno IN (SELECT Pnumber FROM PROJECT WHERE Pname IN ('" +
+                  projectName +
+                  "'));"
+                );
+                while (employees.next()) {
+                  String employeeName =
+                    employees.getString("Fname") +
+                    " " +
+                    employees.getString("Minit") +
+                    " " +
+                    employees.getString("Lname");
+                  textAreaEmployee.append(employeeName + "\n");
+                }
+                employees.close();
+              }
+              statementPrint.close();
+              conn.close();
+            }
+          } catch (Exception exep) {
+            exep.printStackTrace();
+          }
         }
       }
     );
