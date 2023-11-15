@@ -204,9 +204,10 @@ public class EmployeeSearchFrame extends JFrame {
               queryString = "SELECT Fname, Minit, Lname FROM EMPLOYEE";
             } else if (selectedDepartment.isEmpty()) {
               queryString =
-                "SELECT DISTINCT Fname, Minit,  Lname FROM EMPLOYEE, WORKS_ON  WHERE EMPLOYEE.Ssn = WORKS_ON.Essn AND WORKS_ON.Pno " +
+                "SELECT DISTINCT E.Fname, E.Minit, E.Lname FROM EMPLOYEE E LEFT JOIN WORKS_ON WO ON E.Ssn = WO.Essn LEFT JOIN PROJECT P ON WO.Pno = P.Pnumber WHERE " +
+                " E.Ssn " +
                 notProject +
-                " IN (SELECT Pnumber FROM PROJECT WHERE Pname IN (" +
+                " IN (SELECT Essn FROM WORKS_ON LEFT JOIN PROJECT ON Pno = Pnumber WHERE Pname IN (" +
                 projectName +
                 "));";
             } else if (selectedProjects.isEmpty()) {
@@ -222,9 +223,10 @@ public class EmployeeSearchFrame extends JFrame {
                 notDepartment +
                 " IN (" +
                 departmentName +
-                ") AND W.Pno IN (SELECT P.Pnumber FROM PROJECT P WHERE P.Pname " +
+                ") AND " +
+                " E.Ssn " +
                 notProject +
-                " IN (" +
+                " IN (SELECT Essn FROM WORKS_ON LEFT JOIN PROJECT ON Pno = Pnumber WHERE Pname IN (" +
                 projectName +
                 "));";
             }
