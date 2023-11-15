@@ -171,6 +171,7 @@ public class EmployeeSearchFrame extends JFrame {
       new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           try {
+            textAreaEmployee.setText("");
             Connection conn = DatabaseConnection.getConnection(databaseName);
             Statement statementPrint = conn.createStatement();
             List<String> selectedProjects = lstProject.getSelectedValuesList();
@@ -249,29 +250,26 @@ public class EmployeeSearchFrame extends JFrame {
     btnSearch.setBounds(80, 276, 89, 23);
     contentPane.add(btnSearch);
 
-
-    
-//adding functionality to clear button
+    //adding functionality to clear button
     JButton btnClear = new JButton("Clear");
-btnClear.addActionListener(
-    new ActionListener() {
+    btnClear.addActionListener(
+      new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            // Clear the contents of the Employees list
-            textAreaEmployee.setText("");
+          // Clear the contents of the Employees list
+          textAreaEmployee.setText("");
 
-            // Deselect any selected items in the Department and Project lists
-            lstDepartment.clearSelection();
-            lstProject.clearSelection();
+          // Deselect any selected items in the Department and Project lists
+          lstDepartment.clearSelection();
+          lstProject.clearSelection();
 
-            // Turn off the "Not" checkboxes
-            chckbxNotDept.setSelected(false);
-            chckbxNotProject.setSelected(false);
+          // Turn off the "Not" checkboxes
+          chckbxNotDept.setSelected(false);
+          chckbxNotProject.setSelected(false);
         }
-    }
-);
-btnClear.setBounds(236, 276, 89, 23);
-contentPane.add(btnClear);
-
+      }
+    );
+    btnClear.setBounds(236, 276, 89, 23);
+    contentPane.add(btnClear);
 
     textAreaEmployee = new JTextArea();
     textAreaEmployee.setBounds(36, 197, 339, 68);
