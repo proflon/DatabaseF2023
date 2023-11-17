@@ -6,6 +6,7 @@
 
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -36,6 +37,7 @@ public class EmployeeSearchFrame extends JFrame {
   private JTextArea textAreaEmployee;
   private String databaseName = "";
 
+
   /**
    * Launch the application.
    */
@@ -48,6 +50,7 @@ public class EmployeeSearchFrame extends JFrame {
             frame.setVisible(true);
           } catch (Exception e) {
             e.printStackTrace();
+            
           }
         }
       }
@@ -57,7 +60,8 @@ public class EmployeeSearchFrame extends JFrame {
   /**
    * Create the frame.
    */
-  public EmployeeSearchFrame() {
+  public EmployeeSearchFrame() 
+  {
     setTitle("Employee Search");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setBounds(100, 100, 450, 347);
@@ -111,8 +115,10 @@ public class EmployeeSearchFrame extends JFrame {
             statementDept.close();
             statementProj.close();
             conn.close();
-          } catch (Exception exep) {
-            exep.printStackTrace();
+          } 
+          catch(Exception exep) 
+          {
+            error(exep);
           }
         }
       }
@@ -243,8 +249,10 @@ public class EmployeeSearchFrame extends JFrame {
             employees.close();
             statementPrint.close();
             conn.close();
-          } catch (Exception exep) {
-            exep.printStackTrace();
+          } 
+          catch (Exception exep) 
+          {
+            error(exep);
           }
         }
       }
@@ -280,5 +288,38 @@ public class EmployeeSearchFrame extends JFrame {
     scrollPaneEmployee.setBounds(36, 197, 339, 68);
     scrollPaneEmployee.setViewportView(textAreaEmployee);
     contentPane.add(scrollPaneEmployee);
+    }
+
+    /**
+     * 
+     * @param error
+     * Error class will take an exception and create a pop-up
+     * message corresponding to the exception thrown.
+     */
+    private void error(Exception error)
+    {
+      JFrame errorMessage = new JFrame();
+	      errorMessage.setTitle("Task Error");
+        errorMessage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+	    JPanel infoPane = new JPanel();
+    	  infoPane.setBounds(1500, 1000, 1000, 1000);
+	      infoPane.setBorder(new EmptyBorder(5,5,5,5));
+	
+	    errorMessage.setContentPane(infoPane);
+	    infoPane.setLayout(null);
+      
+      String exception = error.toString();
+	    JLabel message = new JLabel
+      (
+        exception.substring(
+          exception.indexOf(" "), exception.length())
+      );
+
+	    message.setFont(new Font("Times New Roman", Font.BOLD, 24));
+    	message.setBounds(25, -300, 1000, 1000);
+      infoPane.add(message);
+
+	    errorMessage.setVisible(true);
   }
 }
