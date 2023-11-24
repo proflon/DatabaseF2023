@@ -1,0 +1,4 @@
+db.url=jdbc:mysql://cis-lonsmith-student2.ccr8ibhqw8qf.us-east-2.rds.amazonaws.com/%s?useSSL=false
+db.user=byanjankarn
+db.password=Nevermind1234
+db.driver=com.mysql.jdbc.Driver
