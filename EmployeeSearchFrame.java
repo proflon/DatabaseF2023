@@ -19,6 +19,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -116,13 +117,32 @@ public class EmployeeSearchFrame extends JFrame {
             statementProj.close();
             conn.close();
           } 
-          catch(Exception exep) 
-          {
-            error(exep);
+          // catch(Exception exep) 
+          // {
+          //   error(exep);
+          // }
+          //updated the pop up window when user enter wrong database name 
+          //it also lets user to enter the correct database name
+          catch (Exception exep) {
+            // Display an error dialog and allow the user to enter the database name again
+            String errorMessage = "Invalid database name. Please enter a valid database name.";
+            String newDatabaseName = promptForDatabaseName(errorMessage);
+            if (newDatabaseName != null) {
+                // If the user entered a new database name, try to connect again
+                txtDatabase.setText(newDatabaseName);
+                actionPerformed(e); // Recursively call the actionPerformed to try again
+            }
           }
         }
+
+        private String promptForDatabaseName(String errorMessage) {
+          return javax.swing.JOptionPane.showInputDialog(
+            null, errorMessage, "Invalid Database Name", JOptionPane.ERROR_MESSAGE);
+        }
       }
+ 
     );
+      
 
     btnDBFill.setFont(new Font("Times New Roman", Font.BOLD, 12));
     btnDBFill.setBounds(307, 19, 68, 23);
